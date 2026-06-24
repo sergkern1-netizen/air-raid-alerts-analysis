@@ -108,7 +108,7 @@ class ProphetModel(TimeSeriesModel):
                 interval_width=self.interval_width,
                 changepoint_prior_scale=self.changepoint_prior_scale,
             )
-            self.model.fit(data)
+            self.model = self.model.fit(data)
         except Exception as e:
             # Fallback: keep simple model
             self.model = None
