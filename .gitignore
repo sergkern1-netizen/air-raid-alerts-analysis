@@ -46,6 +46,7 @@ data/raw/*
 data/processed/*
 !data/.gitkeep
 !data/raw/github_vadimkin.csv
+!data/raw/kaggle_dimakyn.csv
 
 # Logs
 *.log
