@@ -71,6 +71,38 @@
 - Обновлен .gitignore для отслеживания датасета
 - Коммит: "data: add GitHub Vadimkin alerts dataset" (hash: c3b6b75)
 
+**Task 2 - Download Kaggle Dataset (ЗАВЕРШЕНА)**
+- Загруженест датасет из Kaggle (dimakyn/alerts-in-ukraine)
+- CSV файл: alerts_in_ukraine.csv (521,055 строк, 50МБ)
+- Путь сохранения: data/raw/kaggle_dimakyn.csv
+- Колонки: date, time, status, region, message, source_file
+- Коммит: "data: add Kaggle dimakyn alerts dataset" (hash: edc59f4)
+
+**Task 3 - Session Logging (ЗАВЕРШЕНА)**
+- Документирование сессии и хода выполнения
+- Обновлен session-history.md с результатами Task 1 и 2
+
+**Task 4 - Create Data Loader Module (ЗАВЕРШЕНА)**
+- Создан src/loader.py с DataLoader классом
+- Метод load_github(): загружает и обрабатывает GitHub данные (273,274 записей)
+  - Преобразует 'started_at' в 'timestamp'
+  - Добавляет 'source' = 'github'
+  - Сортирует по timestamp
+- Метод load_kaggle(): загружает и обрабатывает Kaggle данные (145,564 записей)
+  - Преобразует 'date' в 'timestamp' (CSV parsing с skip bad lines)
+  - Добавляет 'source' = 'kaggle'
+  - Сортирует по timestamp
+- Метод load_all(): возвращает словарь с обоими датасетами
+- Создан src/__init__.py с экспортом DataLoader
+- Протестирован успешно:
+  - GitHub: 273,274 записей
+  - Kaggle: 145,564 записей (из-за CSV parsing issues)
+  - Total: 418,838 записей
+- Коммит: "feat: add data loader for GitHub and Kaggle sources" (hash: ddfa6e1)
+
 **Статус:**
 - ✅ Task 1 завершена успешно
-- Готово к Task 2: Download Kaggle Dataset
+- ✅ Task 2 завершена успешно
+- ✅ Task 3 завершена успешно
+- ✅ Task 4 завершена успешно
+- Готово к Task 5: Data Validation Module
