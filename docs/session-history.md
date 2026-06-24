@@ -292,3 +292,95 @@
    - Полные инструменты для визуализации (matplotlib, seaborn, plotly)
 
 3. Phase 2 может быть реализован с prophet, отложив LSTM на период после решения проблемы с диском
+
+## Session 5 — 2026-06-24 (Task 5: Model Ensemble Implementation)
+
+**Task 5 - Implement Model Ensemble and Comparison (ЗАВЕРШЕНА)**
+
+**Исходная ситуация:**
+- Проект имеет пример с Prophet моделью (ARIMA упомянут в notebook, но нет полной реализации)
+- Требуется реализовать:
+  1. Класс ModelEnsemble для работы с несколькими моделями
+  2. Функцию compare_models для сравнения разных моделей
+  3. Полный TDD цикл с 5 тестами
+
+**Выполненные действия:**
+
+1. **Создана инфраструктура утилит (src/utils/)**
+   - src/utils/__init__.py с экспортами
+   - src/utils/metrics.py с функциями:
+     * calculate_mae(actual, predicted) - Mean Absolute Error
+     * calculate_rmse(actual, predicted) - Root Mean Squared Error
+     * calculate_mape(actual, predicted) - Mean Absolute Percentage Error
+
+2. **Реализована ARIMA модель (src/models/arima.py)**
+   - ARIMAModel класс с наследованием от TimeSeriesModel
+   - Параметр order=(p, d, q) для конфигурации ARIMA
+   - Методы: fit(data), forecast(steps), get_diagnostics()
+   - Использует statsmodels.tsa.arima.model.ARIMA для реальной реализации
+   - Опциональный fallback на простой forecast если ARIMA не может быть обучена
+
+3. **Реализован ModelEnsemble класс (src/models/ensemble.py)**
+   - __init__(): инициализирует пустой словарь моделей
+   - add_model(name, model): добавляет TimeSeriesModel с валидацией типа
+   - fit(data): обучает все модели в ансамбле
+   - forecast(steps): возвращает dict с прогнозами от каждой модели
+   - ensemble_forecast(steps, method='mean'): объединённый прогноз
+     * Поддерживает методы: 'mean', 'median', 'min', 'max'
+   - get_summary(): возвращает DataFrame с информацией о моделях
+
+4. **Реализована функция compare_models (src/models/ensemble.py)**
+   - compare_models(models_list, train_data, test_data, steps=7)
+   - Обучает каждую модель на train_data
+   - Генерирует прогнозы на test_data
+   - Вычисляет MAE, RMSE, MAPE для каждой модели
+   - Возвращает список словарей с результатами
+   - Ключи результатов: "Model", "MAE", "RMSE", "MAPE"
+
+5. **Тестирование (TDD цикл)**
+   - tests/test_ensemble.py с 5 тестами:
+     * test_ensemble_initialization: инициализация ансамбля
+     * test_ensemble_add_model: добавление моделей в ансамбль
+     * test_ensemble_fit_all_models: обучение всех моделей
+     * test_ensemble_forecast_comparison: прогнозирование от всех моделей
+     * test_compare_models_function: функция сравнения моделей
+
+6. **Обновление src/models/__init__.py**
+   - Добавлен импорт ARIMAModel
+   - Обновлён __all__ для экспорта новых классов
+
+7. **Коммит**
+   - Коммит: "feat: add model ensemble for comparative analysis of forecasts"
+   - Hash: d6eb19d
+   - Включены все файлы: arima.py, ensemble.py, metrics.py, test_ensemble.py, __init__.py
+
+**Финальный результат:**
+
+✅ **Все 5 тестов PASSED:**
+- test_ensemble_initialization PASSED [20%]
+- test_ensemble_add_model PASSED [40%]
+- test_ensemble_fit_all_models PASSED [60%]
+- test_ensemble_forecast_comparison PASSED [80%]
+- test_compare_models_function PASSED [100%]
+
+**Успешно реализовано:**
+- ✅ ARIMAModel с полной функциональностью
+- ✅ ModelEnsemble с методами add_model, fit, forecast, ensemble_forecast
+- ✅ Функция compare_models для сравнения моделей
+- ✅ Модуль метрик (MAE, RMSE, MAPE)
+- ✅ Полный TDD цикл (tests first, then implementation)
+- ✅ Все тесты проходят успешно
+- ✅ Коммит создан и залогирован
+
+**Ключевые компоненты:**
+- ARIMAModel(order=(1,1,1)) - полноценная ARIMA реализация через statsmodels
+- ModelEnsemble - управление несколькими моделями одновременно
+- compare_models() - автоматическое сравнение с вычислением метрик
+- Метрики: MAE, RMSE, MAPE для оценки точности прогнозов
+
+**Project Structure Update:**
+- src/models/arima.py (117 lines)
+- src/models/ensemble.py (194 lines)
+- src/utils/metrics.py (68 lines)
+- tests/test_ensemble.py (81 lines)
+- Total: ~460 lines нового кода
