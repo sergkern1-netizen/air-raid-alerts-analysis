@@ -60,3 +60,17 @@
 Выбрать execution mode:
 1. Subagent-Driven (рекомендуется) - отдельный агент на каждую задачу
 2. Inline Execution - все задачи в сессии с checkpoints
+
+## Session 2 — 2026-06-24 (MVP Execution)
+
+**Task 1 - Download GitHub Vadimkin Dataset (ЗАВЕРШЕНА)**
+- Загруженnest датасет из https://github.com/Vadimkin/ukrainian-air-raid-sirens-dataset
+- CSV файл: official_data_en.csv (273,275 строк, 27МБ)
+- Путь сохранения: data/raw/github_vadimkin.csv
+- Колонки: oblast, raion, hromada, level, started_at, finished_at, source
+- Обновлен .gitignore для отслеживания датасета
+- Коммит: "data: add GitHub Vadimkin alerts dataset" (hash: c3b6b75)
+
+**Статус:**
+- ✅ Task 1 завершена успешно
+- Готово к Task 2: Download Kaggle Dataset
