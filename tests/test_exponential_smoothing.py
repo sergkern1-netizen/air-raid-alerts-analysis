@@ -56,3 +56,39 @@ def test_exponential_smoothing_different_seasonal_periods():
     forecast = model.forecast(steps=14)
 
     assert len(forecast) == 14
+
+
+def test_exponential_smoothing_forecast_without_fit():
+    """Test that forecast raises error if fit not called"""
+    model = ExponentialSmoothingModel()
+    with pytest.raises(ValueError, match="must be fitted"):
+        model.forecast(steps=7)
+
+
+def test_exponential_smoothing_fit_with_numpy_array():
+    """Test fitting with numpy array instead of DataFrame"""
+    dates = pd.date_range("2024-01-01", periods=365, freq="D")
+    values = 100 + np.random.normal(0, 5, 365)
+
+    model = ExponentialSmoothingModel(seasonal_periods=30)
+    model.fit(values)  # Pass numpy array directly
+
+    assert model.is_fitted
+    forecast = model.forecast(steps=7)
+    assert len(forecast) == 7
+
+
+def test_exponential_smoothing_get_diagnostics():
+    """Test get_diagnostics returns model information"""
+    dates = pd.date_range("2024-01-01", periods=365, freq="D")
+    values = 100 + np.random.normal(0, 5, 365)
+    df = pd.DataFrame({"timestamp": dates, "value": values})
+
+    model = ExponentialSmoothingModel(seasonal_periods=30)
+    model.fit(df)
+
+    diagnostics = model.get_diagnostics()
+
+    assert "name" in diagnostics
+    assert diagnostics["seasonal_periods"] == 30
+    assert diagnostics["name"] == "ExponentialSmoothing"

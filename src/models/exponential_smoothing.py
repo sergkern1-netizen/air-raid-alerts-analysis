@@ -4,8 +4,11 @@ import logging
 import numpy as np
 import pandas as pd
 import warnings
+from typing import Union
 
 from .base import TimeSeriesModel
+
+logger = logging.getLogger(__name__)
 
 # Suppress any warnings
 warnings.filterwarnings("ignore")
@@ -49,7 +52,36 @@ class ExponentialSmoothingModel(TimeSeriesModel):
         self._mean = None
         self._std = None
 
-    def fit(self, data):
+    def _fit_exponential_smoothing(self, values: np.ndarray, seasonal_arg=None):
+        """Private method to fit ExponentialSmoothing with given seasonal parameter.
+
+        Parameters
+        ----------
+        values : np.ndarray
+            Training values array
+        seasonal_arg : str or None, optional
+            Seasonal component to use ('add', 'mul', or None)
+
+        Returns
+        -------
+        ExponentialSmoothingResults
+            Fitted ExponentialSmoothing model
+
+        Raises
+        ------
+        Exception
+            If fitting fails with the given parameters
+        """
+        from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
+        return ExponentialSmoothing(
+            values,
+            trend=self.trend,
+            seasonal=seasonal_arg,
+            seasonal_periods=self.seasonal_periods,
+        ).fit(optimized=True)
+
+    def fit(self, data: Union[pd.DataFrame, np.ndarray]) -> None:
         """Fit the Exponential Smoothing model to data.
 
         Parameters
@@ -89,28 +121,20 @@ class ExponentialSmoothingModel(TimeSeriesModel):
 
         # Try to fit Exponential Smoothing model
         try:
-            from statsmodels.tsa.holtwinters import ExponentialSmoothing
-
-            self.fitted_model = ExponentialSmoothing(
-                values,
-                trend=self.trend,
-                seasonal=self.seasonal,
-                seasonal_periods=self.seasonal_periods,
-            )
-            self.fitted_model = self.fitted_model.fit(optimized=True)
+            self.fitted_model = self._fit_exponential_smoothing(values, self.seasonal)
         except Exception as e:
+            logger.warning(
+                f"ExponentialSmoothing with seasonal={self.seasonal} failed: {e}. "
+                f"Trying without seasonal..."
+            )
             # Fallback: try without seasonal component
             try:
-                from statsmodels.tsa.holtwinters import ExponentialSmoothing
-
-                self.fitted_model = ExponentialSmoothing(
-                    values,
-                    trend=self.trend,
-                    seasonal=None,
-                    seasonal_periods=self.seasonal_periods,
-                )
-                self.fitted_model = self.fitted_model.fit(optimized=True)
+                self.fitted_model = self._fit_exponential_smoothing(values, seasonal_arg=None)
             except Exception as fallback_error:
+                logger.warning(
+                    f"ExponentialSmoothing without seasonal also failed: {fallback_error}. "
+                    f"Using fallback method for forecasting."
+                )
                 # If statsmodels fails, keep None and use fallback in forecast
                 self.fitted_model = None
 
@@ -144,8 +168,10 @@ class ExponentialSmoothingModel(TimeSeriesModel):
                 # Ensure all values are finite
                 if np.all(np.isfinite(forecast_values)):
                     return forecast_values.values if hasattr(forecast_values, 'values') else forecast_values
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning(
+                    f"Fitted model forecast failed: {e}. Using fallback method."
+                )
 
         # Fallback: simple exponential smoothing with trend
         forecast_values = np.zeros(steps)
