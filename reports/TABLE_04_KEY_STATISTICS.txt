@@ -1,0 +1,10 @@
+| Metric | Value |
+|--------|-------|
+| Total Records | 418,838 |
+| Days with Alerts | 1,563 |
+| Regions Affected | 25 |
+| Time Period | March 2022 - June 2026 |
+| Average Alerts/Day | 152 |
+| Peak Single Day | 1,004 alerts |
+| Median Daily Alerts | 103.5 |
+| Std Deviation | 135.3 |
