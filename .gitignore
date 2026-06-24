@@ -45,6 +45,7 @@ env/
 data/raw/*
 data/processed/*
 !data/.gitkeep
+!data/raw/github_vadimkin.csv
 
 # Logs
 *.log
