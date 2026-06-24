@@ -98,3 +98,63 @@ class TimeSeriesAnalyzer:
         plt.tight_layout()
 
         return fig
+
+    def arima_forecast(self, steps: int = 7, order: Tuple = (1, 1, 1)) -> Tuple[np.ndarray, Dict]:
+        """Forecast with ARIMA model"""
+        from statsmodels.tsa.arima.model import ARIMA
+
+        daily = self.df.groupby(self.df['timestamp'].dt.date).size()
+
+        try:
+            model = ARIMA(daily.values, order=order)
+            results = model.fit()
+
+            forecast_result = results.get_forecast(steps=steps)
+            # predicted_mean is already a numpy array
+            forecast_values = np.asarray(forecast_result.predicted_mean)
+            conf_int_df = forecast_result.conf_int()
+            conf_int = np.asarray(conf_int_df)
+
+            return forecast_values, {
+                'model': results,
+                'aic': results.aic,
+                'bic': results.bic,
+                'rmse': np.sqrt(np.mean(results.resid**2)),
+                'conf_int': conf_int,
+            }
+        except Exception as e:
+            print(f"ARIMA error: {e}")
+            return None, None
+
+    def plot_forecast(self, steps: int = 7, figsize: Tuple = (14, 6)) -> Tuple[plt.Figure, Dict]:
+        """Plot ARIMA forecast"""
+        daily = self.df.groupby(self.df['timestamp'].dt.date).size()
+        forecast_values, model_info = self.arima_forecast(steps=steps)
+
+        if forecast_values is None:
+            return None, None
+
+        last_date = self.df['timestamp'].max().date()
+        future_dates = pd.date_range(start=last_date, periods=steps+1, freq='D')[1:]
+
+        fig, ax = plt.subplots(figsize=figsize)
+
+        ax.plot(daily.index, daily.values, label='Observed', linewidth=2, color='darkblue')
+        ax.plot(future_dates.date, forecast_values, label='Forecast', linewidth=2,
+                color='red', linestyle='--', marker='o')
+
+        conf_int = model_info['conf_int']
+        ax.fill_between(future_dates.date,
+                        conf_int[:, 0],
+                        conf_int[:, 1],
+                        alpha=0.2, color='red', label='95% Confidence')
+
+        ax.set_title('ARIMA(1,1,1) Forecast - Next 7 Days', fontsize=12, fontweight='bold')
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Number of Alerts')
+        ax.legend()
+        ax.grid(True, alpha=0.3)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        return fig, model_info
