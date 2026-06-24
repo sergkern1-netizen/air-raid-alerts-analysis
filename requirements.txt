@@ -18,8 +18,8 @@ plotly>=5.0.0
 prophet>=1.1.0
 
 # Deep Learning (optional - requires significant disk space)
-# tensorflow>=2.10.0
-# keras>=2.10.0
+tensorflow>=2.10.0
+keras>=2.10.0
 
 # Development & Testing
 pytest>=6.2.0
