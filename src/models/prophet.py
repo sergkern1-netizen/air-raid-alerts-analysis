@@ -100,7 +100,7 @@ class ProphetModel(TimeSeriesModel):
             import logging
             logging.getLogger("prophet").setLevel(logging.WARNING)
             logging.getLogger("cmdstanpy").setLevel(logging.WARNING)
-            
+
             self.model = Prophet(
                 yearly_seasonality=self.yearly_seasonality,
                 weekly_seasonality=self.weekly_seasonality,
@@ -110,7 +110,7 @@ class ProphetModel(TimeSeriesModel):
             )
             self.model = self.model.fit(data)
         except Exception as e:
-            # Fallback: keep simple model
+            print(f"Prophet fit failed: {e}")
             self.model = None
         
         self.is_fitted = True
