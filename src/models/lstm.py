@@ -162,12 +162,15 @@ class LSTMModel(TimeSeriesModel):
         # Add LSTM layers
         for i in range(self.layers):
             return_sequences = i < self.layers - 1  # Return sequences except for last layer
-            model.add(LSTM(
-                self.units,
-                activation='relu',
-                return_sequences=return_sequences,
-                input_shape=(self.lookback, 1) if i == 0 else None
-            ))
+            lstm_kwargs = {
+                'units': self.units,
+                'activation': 'relu',
+                'return_sequences': return_sequences
+            }
+            if i == 0:
+                lstm_kwargs['input_shape'] = (self.lookback, 1)
+
+            model.add(LSTM(**lstm_kwargs))
             if self.dropout > 0:
                 model.add(Dropout(self.dropout))
 
