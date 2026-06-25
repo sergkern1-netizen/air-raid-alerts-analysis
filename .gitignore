@@ -56,3 +56,8 @@ logs/
 # Environment
 .env
 .env.local
+
+# Generated reports
+RESEARCH_REPORT_UK.md
+FINAL_REPORT_CHECK.md
+test_report.md
