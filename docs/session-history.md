@@ -1129,3 +1129,137 @@ air-raid-alerts-analysis/
 2. Push на GitHub
 3. Проект готов до наукового рецензування та державного використання
 
+
+---
+
+## Сессія 23 — 2026-06-25: Roadmap для майбутніх фаз (Future Work Planning)
+
+### Запрос користувача
+Створити окремий файл з планами по улучшению та аналізом того, що не удалось реализовать.
+
+### Виконана робота
+
+#### Створений `future_work.md` (12 KB, детальний roadmap)
+
+**Структура файлу:**
+
+1. **Completion Status: Phase 1 MVP** (2 KB)
+   - ✅ **17/26 analyses implemented (65% scope)**
+   - Завершено: Descriptive stats, Time series, Regional analysis, Models, Ensemble
+   - Недостатньо: Clustering, Granger causality, Advanced regression, Hyperparameter tuning
+
+2. **Not Yet Implemented (9/26 Analyses)** (4 KB)
+   - ❌ K-means Clustering (2d effort, high impact)
+   - ❌ Granger Causality Analysis (3d effort)
+   - ❌ Cross-correlation & Leading Regions (part of Granger)
+   - ❌ Advanced Regression Models (2d effort)
+   - ❌ Cross-validation Framework (2d effort)
+   - ❌ Hyperparameter Optimization (4d effort)
+   - ❌ Stacking Ensemble (3d effort)
+   - ❌ Real-Time API Integration (3d effort)
+   - ❌ Streamlit Dashboard (4d effort)
+
+3. **Phase 2-4 Roadmap (3-12 months)** (3 KB)
+   
+   **Phase 2: Core Enhancements (8 weeks, 40 hours)**
+   - Regional clustering + K-means
+   - Granger causality network
+   - Cross-validation (5-fold)
+   - Real-time API integration (Alerts-ua-py)
+   - LSTM hyperparameter optimization (Optuna)
+   - Target: MAPE 75% → 68%
+   
+   **Phase 3: User-Facing Tools (8 weeks, 35 hours)**
+   - Streamlit dashboard (web interface)
+   - Stacking ensemble (meta-learner)
+   - Prediction intervals (confidence bands)
+   - Regional regression models
+   - Mobile API wrapper
+   - Target: MAPE 68% → 65%
+   
+   **Phase 4: Scientific & Production (10 weeks, 40 hours)**
+   - Scientific paper writing (journal submission)
+   - Docker containerization
+   - Production monitoring & alerting
+   - Bayesian model averaging
+   - External data integration (weather, military ops)
+   - Target: MAPE 65% → 63%
+
+4. **Effort Estimates & Timeline** (2 KB)
+   - Phase 1: 120 hours (✅ done)
+   - Phase 2: 112 hours (8 weeks)
+   - Phase 3: 112 hours (8 weeks)
+   - Phase 4: 160 hours (10 weeks)
+   - Total future: 384 hours (24 weeks, 6 months)
+   - Fast-track: 18 weeks with parallel work
+
+5. **Resource Requirements** (1 KB)
+   - Team: 1 ML engineer + 1 developer (Phases 2-3), +1 domain expert (Phase 4)
+   - Infrastructure: 2 vCPU, 8 GB RAM (~$50/month)
+   - Cost: $2K (build in-house) vs $20K (commercial tools)
+
+6. **Priority Matrix & Quick Wins** (2 KB)
+   - HIGH IMPACT, LOW EFFORT ⭐
+     * Cross-validation (2d) → +5% accuracy
+     * Clustering (2d) → Risk segmentation
+     * Hyperparameter optimization (4d) → +3-5%
+     * Prediction intervals (2d)
+   - **Quick Wins This Week:** 20 hours
+     * Confidence intervals
+     * Regional clustering
+     * Cross-validation
+     * Granger causality matrix
+
+7. **Risk Mitigation & Success Metrics** (1 KB)
+   - Risks: API delay, model degradation, data privacy, scope creep
+   - Mitigations for each
+   - Success metrics table (MAPE target, coverage, update frequency)
+
+### Ключові Знайдено
+
+**17 з 26 аналізів завершено (65%)**
+- Стан MVP: продуктивне використання можливе
+- Точність: 75.4% MAPE (базова лінія)
+- Покриття: 25/25 регіонів
+
+**9 аналізів залишаються (35% scope)**
+- Можуть покращити точність до 63%+ MAPE
+- Реал-тайм інтеграція критична для операційного використання
+- Стейкхолдер-інтерфейс (dashboard) необхідна для політичного впровадження
+
+**Фаза 2: Quick Wins** (3 дні роботи)
+- Кластеризація регіонів
+- Грейнжер причинність
+- Cross-validation
+- Довірчі інтервали
+- Може дати +8% точності
+
+### Статус на конец сессії
+
+✅ **Roadmap для майбутніх фаз завершено**
+
+**Файлові:**
+```
+air-raid-alerts-analysis/
+├── future_work.md ⭐ (12 KB, детальний roadmap)
+├── project_report.md (15 KB, український)
+├── ai_conversation_log.md (8.5 KB, історія)
+├── project_summary.md (6.5 KB, резюме)
+└── docs/session-history.md (updated — ця сессія)
+```
+
+**Загальна документація проекту (4 файли + 35 KB):**
+- ✅ Українськи звіт про дані та проблеми
+- ✅ Структурована історія розробки (21 сессія)
+- ✅ Резюме з блоком проблем/рішень
+- ✅ Детальний roadmap для Phase 2-4
+
+### Наступні кроки
+
+1. Git commit файлу future_work.md
+2. Проект документації 100% завершено
+3. Готово до:
+   - GitHub публікації
+   - Наукового рецензування
+   - Розпочати Phase 2 роботи
+
