@@ -755,3 +755,118 @@ tests/test_prophet.py — 4 tests PASSED
 - Anomaly detection
 - Geospatial analysis (regional forecasting)
 - Cloud deployment (AWS/GCP)
+
+---
+
+## Сессия 17 — 2026-06-25: Phase 3 Planning & Implementation Start
+
+### Запрос пользователя
+"Давай продолжим air raid alerts" — продолжить разработку проекта, перейдя на Phase 3 (Advanced Features).
+
+### Текущий статус
+- ✅ Phase 1 (MVP): Завершена — базовый анализ 418K записей
+- ✅ Phase 2 (Advanced Analytics): Завершена — 4 ML модели (Prophet, LSTM, ExSmoothing, Ensemble)
+- ⏳ Phase 3: Новые возможности (Real-time monitoring, Anomaly detection, Geospatial, Cloud deployment, API)
+
+---
+
+## Сессія 18 — 2026-06-25: Research Report Generator (Task 1)
+
+### Запрос користувача
+Реалізувати Task 1 з плану генерації дослідницького звіту: створити скрипт та тести для генерації дослідницького звіту `RESEARCH_REPORT_UK.md`.
+
+### Процес (TDD підхід)
+
+#### 1️⃣ Написання тестів (Тести спочатку)
+Створено `tests/test_research_report.py` з 7 тестами:
+- `test_csv_files_exist` — перевірка наявності всіх 14 CSV файлів
+- `test_csv_data_quality` — перевірка, що 01_daily_aggregates.csv має 1500+ рядків
+- `test_research_report_generator_init` — ініціалізація класу
+- `test_research_report_generator_load_data` — завантаження даних з CSV
+- `test_research_report_generator_generate_report` — генерація звіту
+- `test_research_report_generator_save_report` — збереження файлу
+- `test_research_report_generator_full_workflow` — повний цикл
+
+#### 2️⃣ Реалізація коду
+Створено `scripts/generate_research_report.py` з класом `ResearchReportGenerator`:
+
+**Методи класу:**
+- `__init__(data_dir, output_file)` — ініціалізація з шляхами до даних і файлу виходу
+- `load_data()` — завантаження CSV файлів у self.data dict (daily, regional, yearly_stats)
+- `generate_report()` — запуск генерації (виклик _add_header + _add_resume)
+- `_add_header()` — MD заголовок з періодом, кількістю днів, регіонів
+- `_add_resume()` — резюме з 5 ключовими знахідками
+- `save_report()` — запис у RESEARCH_REPORT_UK.md з UTF-8 кодуванням
+- `main()` — точка входу
+
+**Особливості:**
+- Завантажує 01_daily_aggregates.csv, 02_regional_summary.csv, 04_yearly_comparison.csv
+- Генерує MD заголовок з метаданими (дата, кількість днів, регіони)
+- Додає 5 ключових знахідок: Escalation, Regional Concentration, Geographic Expansion, Duration Impact, Temporal Patterns
+
+#### 3️⃣ Тестування
+
+**Результати тестів:**
+```
+tests/test_research_report.py::TestResearchReportGenerator::test_csv_files_exist PASSED
+tests/test_research_report.py::TestResearchReportGenerator::test_csv_data_quality PASSED
+tests/test_research_report.py::TestResearchReportGenerator::test_research_report_generator_init PASSED
+tests/test_research_report.py::TestResearchReportGenerator::test_research_report_generator_load_data PASSED
+tests/test_research_report.py::TestResearchReportGenerator::test_research_report_generator_generate_report PASSED
+tests/test_research_report.py::TestResearchReportGenerator::test_research_report_generator_save_report PASSED
+tests/test_research_report.py::TestResearchReportGenerator::test_research_report_generator_full_workflow PASSED
+
+7/7 PASSED ✅
+```
+
+**Повна тестова сьюта проекту:**
+```
+27/27 PASSED ✅ (7 нових + 20 існуючих)
+```
+
+#### 4️⃣ Генерація звіту
+Виконано `python scripts/generate_research_report.py`:
+- ✅ Созданий RESEARCH_REPORT_UK.md (1,763 bytes)
+- ✅ Заголовок з метаданими: 1563 дня, дати 2022-03-15 до 2026-06-24, 25 регіонів
+- ✅ 5 ключових знахідок структуровано в MD форматі
+
+**Вміст звіту:**
+```markdown
+# Air Raid Alerts Analysis Research Report (UK)
+
+## Research Overview
+- Analysis Period: 1563 days
+- Date Range: 2022-03-15 to 2026-06-24
+- Regions Analyzed: 25
+
+## Key Findings Summary
+### 1. Dramatic Escalation Trend
+### 2. Regional Concentration
+### 3. Geographic Expansion
+### 4. Sustained Duration Impact
+### 5. Temporal Patterns
+```
+
+#### 5️⃣ Коміт
+```
+git add scripts/generate_research_report.py tests/test_research_report.py
+git commit -m "feat: add research report generator script and tests"
+Коміт: abdf33e ✅
+```
+
+### Статус на кінець сесії
+✅ **Task 1 (Research Report Generator) — DONE**
+
+**Завершено:**
+- ✅ Тести написані (7/7 PASSED)
+- ✅ Код реалізований (ResearchReportGenerator клас з 7 методів)
+- ✅ Звіт генерується коректно (RESEARCH_REPORT_UK.md створений)
+- ✅ Повна тестова сьюта проходить (27/27)
+- ✅ Коміт в git (abdf33e)
+
+### Наступні кроки
+Tasks 2–4 плану дослідницького звіту (якщо потрібні):
+- Task 2: Додатковий аналіз та таблиці
+- Task 3: Візуалізація графіків
+- Task 4: Публікація та форматування
+
