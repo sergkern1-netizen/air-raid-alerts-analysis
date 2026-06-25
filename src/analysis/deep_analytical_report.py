@@ -1,6 +1,6 @@
 """
 Deep Analytical Report Generator
-Создаёт подробный аналитический отчёт с доказательствами и статистикой
+Generates detailed analytical report with statistical evidence and findings.
 """
 
 import pandas as pd
@@ -15,7 +15,7 @@ warnings.filterwarnings('ignore')
 
 
 class DeepAnalyticalReporter:
-    """Генерирует подробный аналитический отчёт"""
+    """Generates detailed analytical report with statistical evidence."""
 
     def __init__(self, data_dir: str = "data/processed"):
         self.data_dir = Path(data_dir)
@@ -25,65 +25,65 @@ class DeepAnalyticalReporter:
         self.load_data()
 
     def load_data(self):
-        """Загрузить данные"""
+        """Load data from processed CSV files."""
         self.daily_df = pd.read_csv(self.data_dir / "01_daily_aggregates.csv")
         self.daily_df["date"] = pd.to_datetime(self.daily_df["date"])
         self.daily_df = self.daily_df.sort_values("date")
 
         self.regional_df = pd.read_csv(self.data_dir / "02_regional_summary.csv")
-        print("[OK] Data loaded")
+        print("[OK] Data loaded successfully")
 
     def add_section(self, title: str, content: str):
-        """Добавить секцию в отчёт"""
+        """Add section to report."""
         self.report_text += f"\n## {title}\n\n{content}\n"
 
     def _descriptive_statistics(self) -> str:
-        """ЧАСТЬ 1: Дескриптивная статистика"""
+        """PART 1: Descriptive Statistics"""
         alerts = self.daily_df["alerts_count_combined"].values
 
-        text = "### 1.1 Основная статистика\n\n"
-        text += f"| Метрика | Значення |\n"
-        text += f"|---------|----------|\n"
-        text += f"| Кількість спостережень | {len(alerts):,} днів |\n"
-        text += f"| Середня | {np.mean(alerts):.1f} тревог/день |\n"
-        text += f"| Медіана | {np.median(alerts):.1f} тревог/день |\n"
-        text += f"| Станд. відхилення | {np.std(alerts):.1f} |\n"
-        text += f"| Коефіцієнт варіації | {np.std(alerts)/np.mean(alerts)*100:.1f}% |\n"
-        text += f"| Мінімум | {np.min(alerts):.1f} |\n"
+        text = "### 1.1 Basic Statistics\n\n"
+        text += f"| Metric | Value |\n"
+        text += f"|--------|-------|\n"
+        text += f"| Number of Observations | {len(alerts):,} days |\n"
+        text += f"| Mean | {np.mean(alerts):.1f} alerts/day |\n"
+        text += f"| Median | {np.median(alerts):.1f} alerts/day |\n"
+        text += f"| Std Deviation | {np.std(alerts):.1f} |\n"
+        text += f"| Coefficient of Variation | {np.std(alerts)/np.mean(alerts)*100:.1f}% |\n"
+        text += f"| Minimum | {np.min(alerts):.1f} |\n"
         text += f"| Q1 (25%) | {np.percentile(alerts, 25):.1f} |\n"
         text += f"| Q3 (75%) | {np.percentile(alerts, 75):.1f} |\n"
-        text += f"| Максимум | {np.max(alerts):.1f} |\n"
+        text += f"| Maximum | {np.max(alerts):.1f} |\n"
         text += f"| IQR | {np.percentile(alerts, 75) - np.percentile(alerts, 25):.1f} |\n"
-        text += f"| Асиметрія (skewness) | {stats.skew(alerts):.3f} |\n"
-        text += f"| Ексцес (kurtosis) | {stats.kurtosis(alerts):.3f} |\n\n"
+        text += f"| Skewness | {stats.skew(alerts):.3f} |\n"
+        text += f"| Kurtosis | {stats.kurtosis(alerts):.3f} |\n\n"
 
-        # Тест нормальности
+        # Normality test
         stat, p_shapiro = shapiro(alerts)
-        text += "### 1.2 Тестирование нормальности\n\n"
-        text += f"**Shapiro-Wilk тест:**\n"
-        text += f"- Статистика: {stat:.6f}\n"
+        text += "### 1.2 Normality Test\n\n"
+        text += f"**Shapiro-Wilk Test:**\n"
+        text += f"- Statistic: {stat:.6f}\n"
         text += f"- p-value: {p_shapiro:.2e}\n"
-        text += f"- **Вывод:** Данные {'НЕ ' if p_shapiro < 0.05 else ''}нормально распределены (p < 0.05 = не нормальны)\n\n"
+        text += f"- **Conclusion:** Data is {'NOT ' if p_shapiro < 0.05 else ''}normally distributed (p < 0.05 = non-normal)\n\n"
 
-        # Выявление выбросов
+        # Outlier detection
         Q1 = np.percentile(alerts, 25)
         Q3 = np.percentile(alerts, 75)
         IQR = Q3 - Q1
         outliers = alerts[(alerts < Q1 - 1.5*IQR) | (alerts > Q3 + 1.5*IQR)]
 
-        text += "### 1.3 Выявление выбросов (IQR метод)\n\n"
-        text += f"- Нижняя граница: {Q1 - 1.5*IQR:.1f}\n"
-        text += f"- Верхняя граница: {Q3 + 1.5*IQR:.1f}\n"
-        text += f"- **Кількість выбросов:** {len(outliers)} дней ({len(outliers)/len(alerts)*100:.1f}%)\n"
-        text += f"- Максимальный выброс: {np.max(outliers):.1f} тревог (дата: {self.daily_df.loc[alerts.argmax(), 'date'].date()})\n\n"
+        text += "### 1.3 Outlier Detection (IQR Method)\n\n"
+        text += f"- Lower Bound: {Q1 - 1.5*IQR:.1f}\n"
+        text += f"- Upper Bound: {Q3 + 1.5*IQR:.1f}\n"
+        text += f"- **Number of Outliers:** {len(outliers)} days ({len(outliers)/len(alerts)*100:.1f}%)\n"
+        text += f"- Maximum Outlier: {np.max(outliers):.1f} alerts (date: {self.daily_df.loc[alerts.argmax(), 'date'].date()})\n\n"
 
         return text
 
     def _temporal_analysis(self) -> str:
-        """ЧАСТЬ 2: Временные ряды и тренды"""
-        text = "### 2.1 Анализ тренда\n\n"
+        """PART 2: Time Series and Trends"""
+        text = "### 2.1 Trend Analysis\n\n"
 
-        # Линейный тренд
+        # Linear trend
         alerts = self.daily_df["alerts_count_combined"].values
         x = np.arange(len(alerts))
         z = np.polyfit(x, alerts, 1)
@@ -91,13 +91,13 @@ class DeepAnalyticalReporter:
 
         slope = z[0]
         intercept = z[1]
-        text += f"**Линейный тренд:** y = {slope:.4f}x + {intercept:.2f}\n"
-        text += f"- Тренд: {slope:.4f} тревог/день (т.е. +{slope*365:.1f} тревог/год)\n"
-        text += f"- R² (линейный): {np.corrcoef(x, alerts)[0,1]**2:.4f}\n\n"
+        text += f"**Linear Trend:** y = {slope:.4f}x + {intercept:.2f}\n"
+        text += f"- Trend: {slope:.4f} alerts/day (i.e., +{slope*365:.1f} alerts/year)\n"
+        text += f"- R² (linear): {np.corrcoef(x, alerts)[0,1]**2:.4f}\n\n"
 
-        # ADF тест
+        # ADF test
         adf_result = adfuller(alerts)
-        text += "### 2.2 Тест стационарности (ADF)\n\n"
+        text += "### 2.2 Stationarity Test (ADF - Augmented Dickey-Fuller)\n\n"
         text += f"- ADF статистика: {adf_result[0]:.6f}\n"
         text += f"- p-value: {adf_result[1]:.6f}\n"
         text += f"- Критичные значения: {adf_result[4]}\n"
