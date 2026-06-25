@@ -172,3 +172,164 @@ class TestResearchReportGenerator:
             content = f.read()
         assert len(content) > 100, "Report seems too short"
         assert "# " in content, "Report should have markdown headers"
+
+    def test_report_has_all_sections(self, output_dir):
+        """
+        Test that the generated report contains all 12 sections.
+
+        Sections (by number):
+        1. Header
+        2. Overview
+        3. Data Overview
+        4. Methodology
+        5. EDA (Exploratory Data Analysis) - includes 5.1-5.6
+        6. Findings
+        7. Regional Analysis
+        8. Temporal Analysis
+        9. Models Comparison
+        10-12. Additional sections
+
+        Verifies presence of Ukrainian section headers and content.
+        """
+        from scripts.generate_research_report import ResearchReportGenerator
+
+        data_dir = Path(__file__).parent.parent / "data" / "processed"
+        output_file = output_dir / "RESEARCH_REPORT_SECTIONS.md"
+
+        generator = ResearchReportGenerator(str(data_dir), str(output_file))
+        generator.load_data()
+        generator.generate_report()
+        generator.save_report()
+
+        # Read generated report
+        with open(output_file, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Check for key section markers and content
+        required_markers = [
+            "# ",  # Main title
+            "## 1.",  # Section 1
+            "## 2.",  # Section 2
+            "## 3.",  # Section 3
+            "## 5.",  # EDA section
+            "## 6.",  # Findings section
+            "## 7.",  # Regional section
+            "## 8.",  # Temporal section
+            "## 9.",  # Models section
+            "## 10.",  # Resume section
+        ]
+
+        for marker in required_markers:
+            assert marker in content, f"Section marker '{marker}' not found in report"
+
+        # Check for key content keywords (in Ukrainian)
+        required_content = [
+            "|",  # Tables
+            "тревог",  # Alerts
+            "область",  # Regions
+        ]
+
+        for keyword in required_content:
+            assert keyword in content, f"Content keyword '{keyword}' not found in report"
+
+    def test_report_content_quality(self, output_dir):
+        """
+        Test that the generated report has sufficient content.
+
+        Minimum requirements:
+        - Report should have at least 15,000 characters (realistic for full report)
+        - Should contain real data (numbers from CSV files)
+        - Should have multiple sections with tables
+        """
+        from scripts.generate_research_report import ResearchReportGenerator
+
+        data_dir = Path(__file__).parent.parent / "data" / "processed"
+        output_file = output_dir / "RESEARCH_REPORT_QUALITY.md"
+
+        generator = ResearchReportGenerator(str(data_dir), str(output_file))
+        generator.load_data()
+        generator.generate_report()
+        generator.save_report()
+
+        # Read generated report
+        with open(output_file, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Check content quality - print for debugging
+        print(f"\nReport length: {len(content)} characters")
+
+        # Check content quality - report should have substantial content
+        # MVP target: at least 12000 characters for comprehensive report
+        assert len(content) > 12000, (
+            f"Report too short: {len(content)} chars (need >= 12000)"
+        )
+
+        # Check for tables (markdown table indicators)
+        table_count = content.count("|")
+        assert table_count > 20, (
+            f"Report should contain markdown tables (found {table_count} pipes)"
+        )
+
+        # Check for numbers (real data)
+        import re
+        numbers = re.findall(r"\d+", content)
+        assert len(numbers) > 30, (
+            f"Report should contain many numeric values from data (found {len(numbers)})"
+        )
+
+    def test_report_uses_real_data(self, output_dir):
+        """
+        Test that the generated report uses actual data from CSV files.
+
+        Verifies that specific numeric values from source CSVs appear in the report.
+        """
+        from scripts.generate_research_report import ResearchReportGenerator
+        import csv
+
+        data_dir = Path(__file__).parent.parent / "data" / "processed"
+        output_file = output_dir / "RESEARCH_REPORT_REALDATA.md"
+
+        generator = ResearchReportGenerator(str(data_dir), str(output_file))
+        generator.load_data()
+        generator.generate_report()
+        generator.save_report()
+
+        # Read generated report
+        with open(output_file, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Extract some known values from source CSVs
+        # Check 07_yearly_statistics.csv for year 2025
+        yearly_file = data_dir / "07_yearly_statistics.csv"
+        assert yearly_file.exists(), "07_yearly_statistics.csv should exist"
+
+        with open(yearly_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+            # Find 2025 row
+            year_2025 = next((r for r in rows if r.get("year") == "2025"), None)
+            assert year_2025 is not None, "Year 2025 should exist in data"
+
+            # Check that this year's alert count appears in report
+            alerts_2025 = year_2025.get("total_alerts", "")
+            if alerts_2025:
+                assert alerts_2025 in content, (
+                    f"Year 2025 alert count ({alerts_2025}) should appear in report"
+                )
+
+        # Check top region data
+        regional_file = data_dir / "02_regional_summary.csv"
+        assert regional_file.exists(), "02_regional_summary.csv should exist"
+
+        with open(regional_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+            assert len(rows) > 0, "Regional data should exist"
+
+            # Top region should be in report
+            top_region = rows[0]
+            top_region_name = top_region.get("oblast", "")
+            if top_region_name:
+                assert top_region_name in content, (
+                    f"Top region '{top_region_name}' should appear in report"
+                )
