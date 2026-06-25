@@ -5,7 +5,21 @@ import numpy as np
 import pandas as pd
 
 from .base import TimeSeriesModel
-from src.utils.metrics import calculate_mae, calculate_rmse, calculate_mape
+
+def calculate_mae(y_true, y_pred):
+    """Calculate Mean Absolute Error."""
+    import numpy as np
+    return np.mean(np.abs(y_true - y_pred))
+
+def calculate_rmse(y_true, y_pred):
+    """Calculate Root Mean Squared Error."""
+    import numpy as np
+    return np.sqrt(np.mean((y_true - y_pred) ** 2))
+
+def calculate_mape(y_true, y_pred):
+    """Calculate Mean Absolute Percentage Error."""
+    import numpy as np
+    return np.mean(np.abs((y_true - y_pred) / (y_true + 1e-10))) * 100
 
 
 class ModelEnsemble:
