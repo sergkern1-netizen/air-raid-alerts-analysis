@@ -1,0 +1,7 @@
+| Region | Recent (6mo) | Historical Avg | Escalation Factor |
+|--------|-------------|----------------|------------------|
+| Lvivska | 559 | 163 | **3.4x** 🔴 |
+| Ivano-Frankivsk | 487 | 145 | **3.4x** 🔴 |
+| Zakarpattia | 457 | 138 | **3.3x** 🔴 |
+| Kharkivska | 10,167 | 3,303 | **3.1x** 🔴 |
+| Chernihivska | 4,167 | 1,413 | **2.9x** 🔴 |
