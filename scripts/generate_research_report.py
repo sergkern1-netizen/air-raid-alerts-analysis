@@ -770,6 +770,7 @@ def main():
     2. Load data from CSV files
     3. Generate report (header + resume)
     4. Save to RESEARCH_REPORT_UK.md
+    5. Generate interactive Plotly visualizations
     """
     # Get the project root directory
     script_dir = Path(__file__).parent
@@ -778,6 +779,7 @@ def main():
     # Set paths
     data_dir = project_root / "data" / "processed"
     output_file = project_root / "RESEARCH_REPORT_UK.md"
+    figures_dir = project_root / "figures"
 
     # Generate report
     generator = ResearchReportGenerator(str(data_dir), str(output_file))
@@ -785,7 +787,14 @@ def main():
     generator.generate_report()
     generator.save_report()
 
-    print("Research report generation completed successfully!")
+    # Generate interactive plots
+    print("\n" + "="*60)
+    plot_generator = PlotGenerator(str(data_dir), str(figures_dir))
+    plot_generator.generate_all_plots()
+    print("[OK] Графіки збережено в figures/")
+    print("="*60)
+
+    print("\n[SUCCESS] Дослідницький звіт та графіки успішно створені!")
 
 
 if __name__ == "__main__":
