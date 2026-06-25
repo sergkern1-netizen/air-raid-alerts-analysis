@@ -7,8 +7,14 @@ findings/resume section.
 """
 
 import csv
+import sys
 from pathlib import Path
 from typing import Dict, List
+
+# Add scripts directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent))
+
+from generate_plots import PlotGenerator
 
 
 class ResearchReportGenerator:
