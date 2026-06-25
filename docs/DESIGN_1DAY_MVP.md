@@ -1,162 +1,162 @@
 # Air Raid Alerts MVP Design — 1 Day Challenge
 
-**Goal:** Полный рабочий проект с анализом и моделью за 1 день (12 часов)
+**Goal:** Complete working project with analysis and model in 1 day (12 hours)
 
-**Architecture:** 3-источниковая система с кросс-проверкой данных
+**Architecture:** 3-source system with cross-validation
 
 **Tech Stack:** pandas, numpy, matplotlib, alerts-ua-py, statsmodels
 
 ---
 
-## 🎯 Дизайн системы
+## 🎯 System Design
 
 ### Data Flow:
 ```
-3 ИСТОЧНИКА ДАННЫХ (параллельно)
-    ├─ GitHub Vadimkin (CSV) → 30 мин
-    ├─ Kaggle dimakyn (CSV) → 15 мин
-    └─ Alerts-ua-py API → 90 мин (+ регистрация)
+3 DATA SOURCES (parallel)
+    ├─ GitHub Vadimkin (CSV) → 30 min
+    ├─ Kaggle dimakyn (CSV) → 15 min
+    └─ Alerts-ua-py API → 90 min (+ registration)
         ↓
-ВАЛИДАЦИЯ И КРОСС-ПРОВЕРКА (30 мин)
-    ├─ Совпадают ли данные за общий период?
-    ├─ Аномалии в источниках?
-    └─ Финальный датасет (объединенный)
+VALIDATION & CROSS-CHECK (30 min)
+    ├─ Do data match for common period?
+    ├─ Anomalies in sources?
+    └─ Final dataset (combined)
         ↓
-АНАЛИЗ (EDA) (3 часа)
-    ├─ Статистика по регионам
-    ├─ Суточные/недельные паттерны
-    ├─ Тренды
-    └─ Визуализация
+ANALYSIS (EDA) (3 hours)
+    ├─ Regional statistics
+    ├─ Daily/weekly patterns
+    ├─ Trends
+    └─ Visualization
         ↓
-МОДЕЛЬ (ARIMA) (2 часа)
-    ├─ Обучение на историческом датасете
-    ├─ Прогноз на 7 дней
-    └─ Валидация
+MODEL (ARIMA) (2 hours)
+    ├─ Train on historical dataset
+    ├─ Forecast for 7 days
+    └─ Validation
         ↓
-ОТЧЕТ (Jupyter Notebook) (1 час)
-    └─ Выводы + графики + insights
+REPORT (Jupyter Notebook) (1 hour)
+    └─ Conclusions + graphs + insights
 ```
 
 ---
 
-## 📁 Структура проекта (УПРОЩЁННАЯ для 1 дня)
+## 📁 Project Structure (SIMPLIFIED for 1 day)
 
 ```
 air-raid-alerts-analysis/
 ├── data/
 │   ├── raw/
-│   │   ├── github_vadimkin.csv       # Скачанный
-│   │   ├── kaggle_dimakyn.csv        # Скачанный
-│   │   └── alerts_api_live.csv       # Загруженный через API
+│   │   ├── github_vadimkin.csv         # Downloaded
+│   │   ├── kaggle_dimakyn.csv          # Downloaded
+│   │   └── alerts_api_live.csv         # Loaded via API
 │   └── processed/
-│       └── validated_combined.csv    # Объединённый датасет
+│       └── validated_combined.csv      # Combined dataset
 ├── src/
-│   ├── loader.py                     # Загрузка из 3 источников
-│   ├── validator.py                  # Кросс-проверка
-│   └── analyzer.py                   # EDA + ARIMA
+│   ├── loader.py                       # Load from 3 sources
+│   ├── validator.py                    # Cross-validation
+│   └── analyzer.py                     # EDA + ARIMA
 ├── notebooks/
-│   └── 01-full-analysis.ipynb        # ГЛАВНЫЙ РЕЗУЛЬТАТ
+│   └── 01-full-analysis.ipynb          # MAIN RESULT
 ├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🔧 Компоненты (минимальные)
+## 🔧 Components (Minimal)
 
 ### 1. **Loader** (src/loader.py)
-- `load_github()` — читать CSV из GitHub
-- `load_kaggle()` — читать CSV из Kaggle
-- `load_alerts_api()` — fetch из Alerts-ua-py API
+- `load_github()` — read CSV from GitHub
+- `load_kaggle()` — read CSV from Kaggle
+- `load_alerts_api()` — fetch from Alerts-ua-py API
 
 ### 2. **Validator** (src/validator.py)
-- `cross_validate()` — сравнить 3 источника
-- `detect_anomalies()` — найти расхождения
-- `combine_sources()` — объединить надёжные данные
+- `cross_validate()` — compare 3 sources
+- `detect_anomalies()` — find discrepancies
+- `combine_sources()` — merge reliable data
 
 ### 3. **Analyzer** (src/analyzer.py)
-- `basic_stats()` — статистика
-- `detect_patterns()` — паттерны
-- `arima_forecast()` — прогноз
+- `basic_stats()` — statistics
+- `detect_patterns()` — patterns
+- `arima_forecast()` — forecasting
 
 ### 4. **Notebook** (notebooks/01-full-analysis.ipynb)
-- Импорт модулей
-- Загрузка + валидация
-- EDA с графиками
-- ARIMA модель
-- Выводы
+- Import modules
+- Load + validation
+- EDA with graphs
+- ARIMA model
+- Conclusions
 
 ---
 
-## ⏱️ ТОЧНЫЙ TIMELINE
+## ⏱️ EXACT TIMELINE
 
-| Фаза | Что | Время | Ответ |
-|------|-----|-------|--------|
-| 1 | Загрузка GitHub CSV | 30 мин | `pd.read_csv()` |
-| 2 | Загрузка Kaggle CSV | 15 мин | `pd.read_csv()` |
-| 3 | Регистрация Alerts.in.ua + токен | 15 мин | Web form |
-| 4 | Загрузка Alerts-ua-py API | 60 мин | `AlertsUA()` |
-| 5 | Кросс-проверка 3 источников | 30 мин | `validator.py` |
-| 6 | EDA + Visualization | 3 часа | `analyzer.py` |
-| 7 | ARIMA модель + прогноз | 2 часа | `statsmodels` |
-| 8 | Финальный Notebook | 1 час | `.ipynb` |
-| **ИТОГО** | | **~12 часов** | ✅ |
-
----
-
-## 📊 Ожидаемый результат за день
-
-✅ **Загруженные данные:** ~100,000+ записей из 3 источников  
-✅ **Валидация:** Проверена консистентность между источниками  
-✅ **EDA:** 5-7 графиков + insights по паттернам  
-✅ **Модель:** ARIMA с прогнозом на 7 дней  
-✅ **Отчет:** Jupyter notebook с выводами  
-✅ **Код:** Python модули для повторного использования  
+| Phase | What | Time | Solution |
+|-------|------|------|----------|
+| 1 | Load GitHub CSV | 30 min | `pd.read_csv()` |
+| 2 | Load Kaggle CSV | 15 min | `pd.read_csv()` |
+| 3 | Register Alerts.in.ua + token | 15 min | Web form |
+| 4 | Load Alerts-ua-py API | 60 min | `AlertsUA()` |
+| 5 | Cross-validate 3 sources | 30 min | `validator.py` |
+| 6 | EDA + Visualization | 3 hours | `analyzer.py` |
+| 7 | ARIMA model + forecast | 2 hours | `statsmodels` |
+| 8 | Final Notebook | 1 hour | `.ipynb` |
+| **TOTAL** | | **~12 hours** | ✅ |
 
 ---
 
-## 🎁 Bonus: Кросс-проверка трёх источников
+## 📊 Expected Result for Day
+
+✅ **Loaded data:** ~100,000+ records from 3 sources  
+✅ **Validation:** Consistency checked between sources  
+✅ **EDA:** 5-7 graphs + pattern insights  
+✅ **Model:** ARIMA with 7-day forecast  
+✅ **Report:** Jupyter notebook with conclusions  
+✅ **Code:** Python modules for reuse  
+
+---
+
+## 🎁 Bonus: Cross-Validate Three Sources
 
 ```python
-# Пример: совпадают ли данные?
+# Example: do data match?
 github_daily = github_df.groupby('date').size()
 kaggle_daily = kaggle_df.groupby('date').size()
 alerts_daily = alerts_df.groupby('date').size()
 
-# Сравнение за общий период
+# Compare for common period
 common_period = (
-    github_df['date'].min().max(kaggle_df['date'].min(), alerts_df['date'].min()),
-    github_df['date'].max().min(kaggle_df['date'].max(), alerts_df['date'].max())
+    max(github_df['date'].min(), kaggle_df['date'].min(), alerts_df['date'].min()),
+    min(github_df['date'].max(), kaggle_df['date'].max(), alerts_df['date'].max())
 )
 
-# Корреляция между источниками
+# Correlation between sources
 correlation = github_daily.corr(kaggle_daily)
 print(f"GitHub ↔ Kaggle correlation: {correlation:.2%}")
 ```
 
 ---
 
-## 🚀 Начало работы
+## 🚀 Getting Started
 
-1. Создать `src/loader.py`, `src/validator.py`, `src/analyzer.py`
-2. Скачать GitHub + Kaggle CSV в `data/raw/`
-3. Создать Alerts API токен
-4. Написать загрузчик для API
-5. Кросс-проверить данные
-6. Написать EDA анализ
-7. Построить ARIMA модель
-8. Собрать всё в Notebook
-9. Commit и готово! ✅
+1. Create `src/loader.py`, `src/validator.py`, `src/analyzer.py`
+2. Download GitHub + Kaggle CSV to `data/raw/`
+3. Create Alerts API token
+4. Write API loader
+5. Cross-validate data
+6. Write EDA analysis
+7. Build ARIMA model
+8. Assemble everything in Notebook
+9. Commit and done! ✅
 
 ---
 
-## ❌ ЧТО НЕ ДЕЛАЕМ (чтобы уложиться в день)
+## ❌ WHAT WE DON'T DO (to fit in one day)
 
-- ❌ Ensemble моделей (Prophet, LSTM)
-- ❌ Интерактивные Streamlit приложения
+- ❌ Ensemble models (Prophet, LSTM)
+- ❌ Interactive Streamlit applications
 - ❌ Web API (FastAPI)
-- ❌ Docker контейнеры
+- ❌ Docker containers
 - ❌ CI/CD pipelines
-- ❌ Расширенная документация
+- ❌ Extended documentation
 
-Всё это потом, после MVP! 🚀
+All that comes later, after MVP! 🚀
