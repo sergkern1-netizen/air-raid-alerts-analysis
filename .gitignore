@@ -63,4 +63,4 @@ FINAL_REPORT_CHECK.md
 test_report.md
 
 # Generated plots
-figures/
+# figures/  (commented to allow visualization files on GitHub)
